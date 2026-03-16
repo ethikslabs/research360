@@ -9,12 +9,15 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { config } from '../config/env.js'
 
-const clientConfig = {
-  region: config.AWS_REGION,
-  credentials: {
+const clientConfig = { region: config.AWS_REGION }
+
+// Use explicit credentials only when provided (local dev with MinIO)
+// On EC2 the instance role is used automatically
+if (config.AWS_ACCESS_KEY_ID && config.AWS_SECRET_ACCESS_KEY) {
+  clientConfig.credentials = {
     accessKeyId: config.AWS_ACCESS_KEY_ID,
     secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-  },
+  }
 }
 
 if (config.S3_ENDPOINT) {
