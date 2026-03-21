@@ -10,7 +10,9 @@ const REQUIRED = [
   'NODE_ENV',
 ]
 
-// Only needed by Phase 2 workers — warn but don't block startup
+// Required for core features (embedding, reasoning, document extraction).
+// Workers start unconditionally — missing keys cause runtime failures, not startup failures.
+// This is intentional for local dev without all services, but must be understood.
 const PHASE2 = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'UNSTRUCTURED_API_KEY']
 
 function validateEnv() {
@@ -37,6 +39,16 @@ function validateEnv() {
     UNSTRUCTURED_API_KEY: process.env.UNSTRUCTURED_API_KEY || null,
     PORT: parseInt(process.env.PORT, 10) || 3000,
     NODE_ENV: process.env.NODE_ENV,
+    // Discovery agent constants
+    AUTO_INGEST_THRESHOLD: parseFloat(process.env.AUTO_INGEST_THRESHOLD) || 0.85,
+    REVIEW_THRESHOLD: parseFloat(process.env.REVIEW_THRESHOLD) || 0.60,
+    VENDOR_STALENESS_DAYS: parseInt(process.env.VENDOR_STALENESS_DAYS, 10) || 30,
+    HORIZON_LOOKBACK_HOURS: parseInt(process.env.HORIZON_LOOKBACK_HOURS, 10) || 24,
+    DISCOVERY_MAX_CANDIDATES: parseInt(process.env.DISCOVERY_MAX_CANDIDATES, 10) || 20,
+    DISCOVERY_MAX_GAP: parseInt(process.env.DISCOVERY_MAX_GAP, 10) || 8,
+    DISCOVERY_MAX_STALENESS: parseInt(process.env.DISCOVERY_MAX_STALENESS, 10) || 6,
+    DISCOVERY_MAX_HORIZON: parseInt(process.env.DISCOVERY_MAX_HORIZON, 10) || 6,
+    DEDUPE_LOOKBACK_DAYS: parseInt(process.env.DEDUPE_LOOKBACK_DAYS, 10) || 30,
   })
 }
 
