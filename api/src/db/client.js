@@ -1,5 +1,5 @@
 import pg from 'pg'
-import { readFileSync } from 'fs'
+import { readFileSync, readdirSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import { config } from '../config/env.js'
@@ -10,8 +10,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export const pool = new Pool({ connectionString: config.DATABASE_URL })
 
 export async function initialize() {
-  const sql = readFileSync(join(__dirname, 'migrations', '001_initial.sql'), 'utf8')
-  await pool.query(sql)
+  const migrationsDir = join(__dirname, 'migrations')
+  const files = readdirSync(migrationsDir)
+    .filter(f => f.endsWith('.sql'))
+    .sort()
+  for (const file of files) {
+    const sql = readFileSync(join(migrationsDir, file), 'utf8')
+    await pool.query(sql)
+  }
 }
 
 export async function healthCheck() {
