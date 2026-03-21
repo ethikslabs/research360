@@ -13,11 +13,9 @@ export async function buildCoverageSummary() {
   const [totals, byFramework, byVendor, byJurisdiction, thinAreasResult] = await Promise.all([
     pool.query(`
       SELECT
-        COUNT(*)                                       AS chunks,
-        COUNT(DISTINCT UNNEST(framework_tags))         AS frameworks_covered,
-        COUNT(DISTINCT UNNEST(vendor_tags))            AS vendors_covered
-      FROM chunks
-      WHERE framework_tags IS NOT NULL OR vendor_tags IS NOT NULL
+        (SELECT COUNT(*) FROM chunks)                                       AS chunks,
+        (SELECT COUNT(DISTINCT tag) FROM chunks, UNNEST(framework_tags) AS tag) AS frameworks_covered,
+        (SELECT COUNT(DISTINCT tag) FROM chunks, UNNEST(vendor_tags) AS tag)    AS vendors_covered
     `),
     pool.query(`
       SELECT
