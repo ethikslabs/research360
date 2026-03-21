@@ -11,7 +11,10 @@ import { startExtractionWorker } from './workers/extractionWorker.js'
 import { startTransformWorker } from './workers/transformWorker.js'
 import { startChunkWorker } from './workers/chunkWorker.js'
 import { startEmbeddingWorker } from './workers/embeddingWorker.js'
+import { startDiscoveryWorker } from './workers/discovery-worker.js'
 import { config } from './config/env.js'
+import discoveryRoutes from './routes/discovery.js'
+import { queues } from './queue/client.js'
 
 const app = Fastify({
   logger: {
@@ -45,6 +48,7 @@ app.register(healthRoutes)
 app.register(ingestRoutes)
 app.register(documentRoutes)
 app.register(queryRoutes)
+app.register(discoveryRoutes)
 
 async function start() {
   await initialize()
@@ -52,6 +56,19 @@ async function start() {
   startTransformWorker()
   startChunkWorker()
   startEmbeddingWorker()
+  startDiscoveryWorker()
+
+  // Schedule nightly discovery run at 02:00
+  await queues.discovery.add(
+    'nightly',
+    { trigger: 'scheduled' },
+    {
+      repeat: { cron: '0 2 * * *' },
+      jobId: 'discovery-nightly',
+    }
+  )
+  console.log(JSON.stringify({ stage: 'discovery_scheduler', status: 'scheduled', cron: '0 2 * * *' }))
+
   await app.listen({ port: config.PORT, host: '0.0.0.0' })
 }
 
