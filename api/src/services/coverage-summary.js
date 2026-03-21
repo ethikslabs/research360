@@ -79,7 +79,7 @@ export async function buildCoverageSummary() {
       tag:               r.tag,
       chunk_count:       parseInt(r.chunk_count),
       freshest:          r.freshest,
-      days_since_latest: r.days_since_latest,
+      days_since_latest: parseInt(r.days_since_latest),
     })),
     coverage_by_jurisdiction: byJurisdiction.rows.map(r => ({
       jurisdiction: r.jurisdiction,
@@ -89,6 +89,10 @@ export async function buildCoverageSummary() {
       vendor:            r.tag,
       days_since_latest: r.days_since_latest,
     })),
-    thin_areas: thinAreasResult.rows,
+    thin_areas: thinAreasResult.rows.map(r => ({
+      framework:    r.framework,
+      jurisdiction: r.jurisdiction,
+      chunk_count:  parseInt(r.chunk_count),
+    })),
   }
 }
