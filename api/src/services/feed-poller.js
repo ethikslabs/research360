@@ -30,7 +30,7 @@ const SEED_FEEDS = [
     jurisdiction: 'AU',
   },
   {
-    name: 'NIST Cybersecurity News',
+    name: 'NIST News',
     url: 'https://www.nist.gov/news-events/cybersecurity',
     type: 'url',
     tier: 1,
