@@ -78,6 +78,13 @@ describe('validateManifest', () => {
     expect(result.rejected[0].reason).toMatch(/url/)
   })
 
+  it('rejects invalid source_type', () => {
+    const bad = { ...VALID_CANDIDATE, source_type: 'rss' }
+    const result = validateManifest(JSON.stringify([bad]))
+    expect(result.candidates).toHaveLength(0)
+    expect(result.rejected[0].reason).toMatch(/source_type/)
+  })
+
   it('accepts multiple candidates, rejects bad ones individually', () => {
     const bad = { ...VALID_CANDIDATE, confidence: -1 }
     const result = validateManifest(JSON.stringify([VALID_CANDIDATE, bad]))
