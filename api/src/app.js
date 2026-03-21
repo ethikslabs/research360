@@ -52,6 +52,8 @@ app.register(discoveryRoutes)
 
 async function start() {
   await initialize()
+  await app.listen({ port: config.PORT, host: '0.0.0.0' })
+
   startExtractionWorker()
   startTransformWorker()
   startChunkWorker()
@@ -68,8 +70,6 @@ async function start() {
     }
   )
   console.log(JSON.stringify({ stage: 'discovery_scheduler', status: 'scheduled', cron: '0 2 * * *' }))
-
-  await app.listen({ port: config.PORT, host: '0.0.0.0' })
 }
 
 start().catch(err => {
