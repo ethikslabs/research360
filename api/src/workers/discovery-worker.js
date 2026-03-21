@@ -278,6 +278,13 @@ async function runDiscovery() {
             `UPDATE discovery_candidates SET status = 'ingested' WHERE candidate_id = $1`,
             [candidateId]
           )
+        } else {
+          // Auto-ingest failed — revert to pending so humans can review
+          metrics.candidates_pending_review++
+          await pool.query(
+            `UPDATE discovery_candidates SET status = 'pending', auto_ingest = FALSE WHERE candidate_id = $1`,
+            [candidateId]
+          )
         }
       } else {
         metrics.candidates_pending_review++
