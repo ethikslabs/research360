@@ -10,24 +10,24 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- 2. Add provenance columns to chunks (all idempotent)
+-- 2. Add provenance columns to chunks (all idempotent via IF NOT EXISTS)
 -- ─────────────────────────────────────────────────────────────────────────────
 
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN provenance              JSONB         NOT NULL DEFAULT '{}'; EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN source_type             VARCHAR(20);                        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN source_subtype          VARCHAR(30);                        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN extraction_confidence   FLOAT;                              EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN ingested_by             VARCHAR(100);                       EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN source_retrieved_at     TIMESTAMPTZ;                        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN source_uri              TEXT;                               EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN raw_snapshot_uri        TEXT;                               EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN snapshot_policy         VARCHAR(30)   DEFAULT 'static';     EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN is_stale                BOOLEAN       DEFAULT FALSE;        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN stale_since             TIMESTAMPTZ;                        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN is_superseded           BOOLEAN       DEFAULT FALSE;        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN superseded_at           TIMESTAMPTZ;                        EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN superseded_by_chunk_id  UUID REFERENCES chunks(id);         EXCEPTION WHEN duplicate_column THEN NULL; END $;
-DO $ BEGIN ALTER TABLE chunks ADD COLUMN previous_chunk_id       UUID REFERENCES chunks(id);         EXCEPTION WHEN duplicate_column THEN NULL; END $;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS provenance              JSONB         NOT NULL DEFAULT '{}';
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS source_type             VARCHAR(20);
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS source_subtype          VARCHAR(30);
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS extraction_confidence   FLOAT;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS ingested_by             VARCHAR(100);
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS source_retrieved_at     TIMESTAMPTZ;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS source_uri              TEXT;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS raw_snapshot_uri        TEXT;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS snapshot_policy         VARCHAR(30)   DEFAULT 'static';
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS is_stale                BOOLEAN       DEFAULT FALSE;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS stale_since             TIMESTAMPTZ;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS is_superseded           BOOLEAN       DEFAULT FALSE;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS superseded_at           TIMESTAMPTZ;
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS superseded_by_chunk_id  UUID REFERENCES chunks(id);
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS previous_chunk_id       UUID REFERENCES chunks(id);
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 3. Indexes on chunks (provenance columns)
@@ -62,15 +62,15 @@ CREATE TABLE IF NOT EXISTS trust_runs (
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 5. prevent_trust_runs_mutation — DB-level enforcement of append-only invariant
+--    Uses single-quoted function body to avoid dollar-quoting (pg client compat).
 -- ─────────────────────────────────────────────────────────────────────────────
 
 CREATE OR REPLACE FUNCTION prevent_trust_runs_mutation()
-RETURNS TRIGGER AS $
-BEGIN
-  RAISE EXCEPTION 'trust_runs is append-only. Updates and deletes are not permitted. run_id: %', OLD.run_id
-    USING ERRCODE = 'restrict_violation';
-END;
-$ LANGUAGE plpgsql;
+RETURNS TRIGGER LANGUAGE plpgsql AS
+'BEGIN
+  RAISE EXCEPTION ''trust_runs is append-only. Updates and deletes are not permitted. run_id: %'', OLD.run_id
+    USING ERRCODE = ''restrict_violation'';
+END;';
 
 DROP TRIGGER IF EXISTS trust_runs_immutable ON trust_runs;
 CREATE TRIGGER trust_runs_immutable
