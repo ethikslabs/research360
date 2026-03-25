@@ -55,7 +55,7 @@ export async function deleteDocument(id) {
   return handleResponse(res)
 }
 
-export async function query({ query, persona, complexity, sessionId, filters }) {
+export async function query({ query, persona, complexity, sessionId, filters, provenance_depth = 'summary' }) {
   const res = await fetch(`${API_URL}/research360/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -65,6 +65,7 @@ export async function query({ query, persona, complexity, sessionId, filters }) 
       complexity,
       session_id: sessionId,
       filters,
+      provenance_depth,
     }),
   })
   return handleResponse(res)
