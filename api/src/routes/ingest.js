@@ -30,10 +30,11 @@ export default async function ingestRoutes(app) {
     const fileBuffer = await data.toBuffer()
     const s3Key = await upload(tenantId, doc.id, 'original', fileBuffer, data.mimetype)
 
-    await enqueue(EVENTS.CONTENT_UPLOADED, buildPayload(doc.id, tenantId, EVENTS.CONTENT_UPLOADED))
+    const job = await enqueue(EVENTS.CONTENT_UPLOADED, buildPayload(doc.id, tenantId, EVENTS.CONTENT_UPLOADED))
 
     return reply.status(201).send({
       document_id: doc.id,
+      job_id: job?.id || null,
       status: 'PENDING',
       message: 'Document queued for processing',
     })
@@ -51,10 +52,11 @@ export default async function ingestRoutes(app) {
 
     const doc = await insert({ tenantId, title: title || null, sourceType, sourceUrl: url })
 
-    await enqueue(EVENTS.CONTENT_UPLOADED, buildPayload(doc.id, tenantId, EVENTS.CONTENT_UPLOADED))
+    const job = await enqueue(EVENTS.CONTENT_UPLOADED, buildPayload(doc.id, tenantId, EVENTS.CONTENT_UPLOADED))
 
     return reply.status(201).send({
       document_id: doc.id,
+      job_id: job?.id || null,
       status: 'PENDING',
       source_type: sourceType,
       message: 'URL queued for processing',

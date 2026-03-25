@@ -12,8 +12,12 @@ import { startTransformWorker } from './workers/transformWorker.js'
 import { startChunkWorker } from './workers/chunkWorker.js'
 import { startEmbeddingWorker } from './workers/embeddingWorker.js'
 import { startDiscoveryWorker } from './workers/discovery-worker.js'
+import { startStaleWorker } from './workers/stale-worker.js'
 import { config } from './config/env.js'
 import discoveryRoutes from './routes/discovery.js'
+import researchRoutes from './routes/research.js'
+import provenanceRoutes from './routes/provenance.js'
+import trustRoutes from './routes/trust.js'
 import { queues } from './queue/client.js'
 
 const app = Fastify({
@@ -49,6 +53,9 @@ app.register(ingestRoutes)
 app.register(documentRoutes)
 app.register(queryRoutes)
 app.register(discoveryRoutes)
+app.register(researchRoutes)
+app.register(provenanceRoutes)
+app.register(trustRoutes)
 
 async function start() {
   await initialize()
@@ -59,6 +66,7 @@ async function start() {
   startChunkWorker()
   startEmbeddingWorker()
   startDiscoveryWorker()
+  startStaleWorker()
 
   // Schedule nightly discovery run at 02:00
   await queues.discovery.add(
@@ -70,6 +78,17 @@ async function start() {
     }
   )
   console.log(JSON.stringify({ stage: 'discovery_scheduler', status: 'scheduled', cron: '0 2 * * *' }))
+
+  // Schedule hourly stale detection scan
+  await queues.stale.add(
+    'hourly',
+    { trigger: 'scheduled' },
+    {
+      repeat: { cron: '0 * * * *' },
+      jobId: 'stale-hourly',
+    }
+  )
+  console.log(JSON.stringify({ stage: 'stale_scheduler', status: 'scheduled', cron: '0 * * * *' }))
 }
 
 start().catch(err => {
