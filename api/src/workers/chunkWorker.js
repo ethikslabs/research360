@@ -5,23 +5,27 @@ import { chunk } from '../services/chunkService.js'
 import { download } from '../services/s3Service.js'
 import { updateStatus, updateMetadata } from '../db/queries/documents.js'
 import { insertBatch } from '../db/queries/chunks.js'
+import { buildChunkRow } from '../services/provenanceService.js'
 
 export function startChunkWorker() {
   const worker = new Worker('chunk', async (job) => {
 
-    const { document_id, tenant_id } = job.data
+    const { document_id, tenant_id, provenance_meta } = job.data
     console.log(JSON.stringify({ stage: 'chunking', document_id, timestamp: new Date().toISOString() }))
 
     const buffer = await download(tenant_id, document_id, 'transformed')
     const chunks = chunk(buffer.toString('utf8'))
 
+    const provenanceRow = buildChunkRow(provenance_meta)
+
     await insertBatch(chunks.map(c => ({
-      tenantId: tenant_id,
+      tenantId:  tenant_id,
       documentId: document_id,
       chunkIndex: c.chunk_index,
-      chunkText: c.chunk_text,
-      chunkHash: c.chunk_hash,
+      chunkText:  c.chunk_text,
+      chunkHash:  c.chunk_hash,
       tokenCount: c.token_count,
+      ...provenanceRow,
     })))
 
     await updateStatus(document_id, 'CHUNKED')

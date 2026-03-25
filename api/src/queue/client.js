@@ -10,6 +10,7 @@ export const queues = {
   chunk:       new Queue('chunk',       { connection: redis }),
   embedding:   new Queue('embedding',   { connection: redis }),
   discovery:   new Queue('discovery',   { connection: redis }),
+  stale:       new Queue('stale',       { connection: redis }),
 }
 
 export async function healthCheck() {

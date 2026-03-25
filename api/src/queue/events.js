@@ -25,9 +25,10 @@ export function buildPayload(documentId, tenantId, stage, error = null) {
 
 export async function enqueue(eventName, payload) {
   const queueName = QUEUE_MAP[eventName]
-  if (!queueName) return
-  await queues[queueName].add(eventName, payload, {
+  if (!queueName) return null
+  const job = await queues[queueName].add(eventName, payload, {
     attempts: 3,
     backoff: { type: 'exponential', delay: 1000 },
   })
+  return job
 }

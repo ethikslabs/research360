@@ -8,7 +8,7 @@ import { updateStatus, updateMetadata, updateTitle } from '../db/queries/documen
 export function startTransformWorker() {
   const worker = new Worker('transform', async (job) => {
 
-    const { document_id, tenant_id } = job.data
+    const { document_id, tenant_id, provenance_meta } = job.data
     console.log(JSON.stringify({ stage: 'transform', document_id, timestamp: new Date().toISOString() }))
 
     const rawBuffer = await download(tenant_id, document_id, 'extracted')
@@ -20,7 +20,7 @@ export function startTransformWorker() {
 
     await upload(tenant_id, document_id, 'transformed', Buffer.from(text), 'text/plain')
     await updateStatus(document_id, 'TRANSFORMED')
-    await enqueue(EVENTS.CONTENT_TRANSFORMED, buildPayload(document_id, tenant_id, EVENTS.CONTENT_TRANSFORMED))
+    await enqueue(EVENTS.CONTENT_TRANSFORMED, { ...buildPayload(document_id, tenant_id, EVENTS.CONTENT_TRANSFORMED), provenance_meta })
 
     console.log(JSON.stringify({ stage: 'transform_complete', document_id, timestamp: new Date().toISOString() }))
   }, {
