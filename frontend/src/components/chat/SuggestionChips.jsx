@@ -7,7 +7,7 @@ export default function SuggestionChips({ suggestions, onSelect }) {
         <button
           key={i}
           onClick={() => onSelect(s)}
-          className="border border-white/20 rounded-full px-3 py-1 text-xs text-[#8a8a8a] hover:border-indigo-500 hover:text-[#f0f0f0] transition-colors cursor-pointer"
+          className="border border-line rounded-full px-3 py-1 text-xs text-fade hover:border-indigo-500 hover:text-ink transition-colors cursor-pointer"
         >
           {s}
         </button>

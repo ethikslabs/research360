@@ -32,7 +32,7 @@ export default function ChatInterface() {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Selectors */}
-      <div className="flex items-center gap-4 px-6 py-3 border-b border-[#2e2e2e] bg-[#0f0f0f] flex-wrap">
+      <div className="flex items-center gap-4 px-6 py-3 flex-wrap" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-deep)' }}>
         <PersonaSelector value={persona} onChange={setPersona} />
         <ComplexitySelector value={complexity} onChange={setComplexity} />
         <div className="ml-auto">
@@ -45,8 +45,8 @@ export default function ChatInterface() {
         {isEmpty ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-6 text-center">
             <div>
-              <div className="text-xl font-semibold text-[#f0f0f0] mb-2">Research360</div>
-              <div className="text-sm text-[#8a8a8a]">
+              <div className="text-xl font-semibold text-ink mb-2">Research360</div>
+              <div className="text-sm text-fade">
                 Ask anything across your ingested knowledge base.
               </div>
             </div>
@@ -55,7 +55,7 @@ export default function ChatInterface() {
                 <button
                   key={s}
                   onClick={() => submit(s)}
-                  className="text-left px-4 py-3 bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg text-sm text-[#8a8a8a] hover:text-[#f0f0f0] hover:border-[#3e3e3e] transition-colors"
+                  className="text-left px-4 py-3 bg-surface border border-line rounded-lg text-sm text-fade hover:text-ink hover:border-fade transition-colors"
                 >
                   {s}
                 </button>
@@ -73,7 +73,7 @@ export default function ChatInterface() {
               />
             ))}
             {loading && (
-              <div className="bg-[#242424] rounded-lg px-4 py-3 w-fit">
+              <div className="bg-elevated rounded-lg px-4 py-3 w-fit">
                 <LoadingDots />
               </div>
             )}

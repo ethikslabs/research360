@@ -1,37 +1,76 @@
 import { config } from '../config/env.js'
 
 const SEED_FEEDS = [
+  // ── Australian ecosystem ────────────────────────────────────────────────
   {
-    name: 'CISA KEV',
-    url: 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
-    type: 'api_feed',
-    tier: 1,
-    jurisdiction: 'US',
-  },
-  {
-    name: 'NVD CVE',
-    url: 'https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=20',
-    type: 'api_feed',
-    tier: 1,
-    jurisdiction: 'US',
-  },
-  {
-    name: 'ACSC Alerts',
-    url: 'https://www.cyber.gov.au/about-us/view-all-content/alerts-and-advisories',
+    name: 'StartupAus Research',
+    url: 'https://startupaus.org/research/',
     type: 'url',
     tier: 1,
     jurisdiction: 'AU',
   },
   {
-    name: 'OAIC Breach Register',
-    url: 'https://www.oaic.gov.au/privacy/notifiable-data-breaches/notifiable-data-breaches-register',
+    name: 'RBA Statement on Monetary Policy',
+    url: 'https://www.rba.gov.au/publications/smp/',
     type: 'url',
     tier: 1,
     jurisdiction: 'AU',
   },
+  // ── AI & tech ───────────────────────────────────────────────────────────
   {
-    name: 'NIST News',
-    url: 'https://www.nist.gov/news-events/cybersecurity',
+    name: 'ARK Invest Research',
+    url: 'https://ark-invest.com/research/',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'US',
+  },
+  {
+    name: 'Gartner Newsroom',
+    url: 'https://www.gartner.com/en/newsroom',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'GLOBAL',
+  },
+  {
+    name: 'Stanford HAI News',
+    url: 'https://hai.stanford.edu/news',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'US',
+  },
+  // ── VC & founder ────────────────────────────────────────────────────────
+  {
+    name: 'a16z Future',
+    url: 'https://a16z.com/latest/',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'US',
+  },
+  {
+    name: 'First Round Review',
+    url: 'https://review.firstround.com/',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'US',
+  },
+  {
+    name: 'YC Blog',
+    url: 'https://www.ycombinator.com/blog',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'US',
+  },
+  // ── Market intelligence ─────────────────────────────────────────────────
+  {
+    name: 'CB Insights Research',
+    url: 'https://www.cbinsights.com/research/',
+    type: 'url',
+    tier: 1,
+    jurisdiction: 'GLOBAL',
+  },
+  {
+    name: 'Sequoia Articles',
+    url: 'https://www.sequoiacap.com/article/',
     type: 'url',
     tier: 1,
     jurisdiction: 'US',

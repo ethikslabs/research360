@@ -6,7 +6,13 @@ import SuggestionChips from './SuggestionChips.jsx'
 function UserBubble({ content }) {
   return (
     <div className="flex justify-end animate-fade-up">
-      <div className="max-w-[70%] bg-indigo-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm text-sm leading-relaxed">
+      <div
+        className="max-w-[70%] text-white px-4 py-3 text-[13px] leading-relaxed"
+        style={{
+          background: '#4a7560',
+          borderRadius: '14px 14px 3px 14px',
+        }}
+      >
         {content}
       </div>
     </div>
@@ -14,15 +20,15 @@ function UserBubble({ content }) {
 }
 
 function SourcesAccordion({ sources }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   if (!sources?.length) return null
 
   return (
-    <div className="mt-4 border-t border-[#2e2e2e] pt-3">
+    <div className="mt-4 border-t border-line pt-3">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 text-xs text-[#8a8a8a] hover:text-[#f0f0f0] transition-colors mb-2"
+        className="flex items-center gap-1.5 text-xs text-fade hover:text-ink transition-colors mb-2"
       >
         <span className="transition-transform" style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}>
           ▾
@@ -42,13 +48,19 @@ function SourcesAccordion({ sources }) {
 
 function AssistantBubble({ msg, isLast, onSuggestion }) {
   return (
-    <div className="bg-[#242424] rounded-lg px-4 py-4 text-sm text-[#f0f0f0] animate-fade-up">
+    <div
+      className="rounded-lg px-5 py-4 text-ink animate-fade-up"
+      style={{ background: 'var(--surface)', border: '1px solid var(--elevated)' }}
+    >
       {msg.persona && (
-        <span className="inline-block mb-3 text-xs px-2 py-0.5 rounded bg-indigo-600/20 text-indigo-300 capitalize">
+        <span
+          className="inline-block mb-3 text-[10px] uppercase tracking-[0.1em] px-2 py-0.5 rounded"
+          style={{ background: '#1e2e26', color: '#7faa94' }}
+        >
           {msg.persona}
         </span>
       )}
-      <div className="prose prose-invert prose-sm max-w-none leading-relaxed">
+      <div className="prose prose-invert prose-sm max-w-none">
         <ReactMarkdown>{msg.content}</ReactMarkdown>
       </div>
       <SourcesAccordion sources={msg.sources} />
@@ -61,7 +73,10 @@ function AssistantBubble({ msg, isLast, onSuggestion }) {
 
 function ErrorBubble({ content }) {
   return (
-    <div className="bg-red-900/20 border border-red-800/40 rounded-lg px-4 py-3 text-sm text-red-400">
+    <div
+      className="rounded-lg px-4 py-3 text-[13px]"
+      style={{ background: '#1e1010', border: '1px solid #3a1a1a', color: '#c08080' }}
+    >
       {content}
     </div>
   )

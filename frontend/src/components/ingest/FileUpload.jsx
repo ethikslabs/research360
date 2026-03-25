@@ -93,12 +93,12 @@ export default function FileUpload({ onSuccess }) {
           'border-2 border-dashed rounded-lg p-10 flex flex-col items-center gap-2 cursor-pointer transition-colors',
           dragging
             ? 'border-indigo-500 bg-indigo-500/5'
-            : 'border-[#2e2e2e] hover:border-[#3e3e3e]',
+            : 'border-line hover:border-fade',
         ].join(' ')}
       >
         <span className="text-2xl">↑</span>
-        <span className="text-[#f0f0f0] text-sm">Drag files here, or click to browse</span>
-        <span className="text-[#8a8a8a] text-xs">PDF · DOCX · PPTX</span>
+        <span className="text-ink text-sm">Drag files here, or click to browse</span>
+        <span className="text-fade text-xs">PDF · DOCX · PPTX</span>
         <input
           ref={inputRef}
           type="file"
@@ -112,11 +112,11 @@ export default function FileUpload({ onSuccess }) {
       {queue.length > 0 && (
         <div className="flex flex-col gap-2">
           {queue.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3 bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg px-4 py-3">
+            <div key={idx} className="flex items-center gap-3 bg-surface border border-line rounded-lg px-4 py-3">
               <span className="text-lg">{fileIcon(item.file.name)}</span>
               <div className="flex-1 min-w-0">
-                <div className="text-sm text-[#f0f0f0] truncate">{item.file.name}</div>
-                <div className="text-xs text-[#8a8a8a]">{formatBytes(item.file.size)}</div>
+                <div className="text-sm text-ink truncate">{item.file.name}</div>
+                <div className="text-xs text-fade">{formatBytes(item.file.size)}</div>
                 {item.error && <div className="text-xs text-red-400 mt-1">{item.error}</div>}
               </div>
               <input
@@ -125,7 +125,7 @@ export default function FileUpload({ onSuccess }) {
                 value={item.title}
                 onChange={e => updateTitle(idx, e.target.value)}
                 disabled={item.done || item.progress === 'uploading'}
-                className="w-40 bg-[#242424] border border-[#2e2e2e] rounded px-2 py-1 text-xs text-[#f0f0f0] placeholder-[#8a8a8a] focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                className="w-40 bg-elevated border border-line rounded px-2 py-1 text-xs text-ink placeholder-fade focus:outline-none focus:border-indigo-500 disabled:opacity-50"
               />
               {item.done ? (
                 <span className="text-xs text-green-400">✓</span>
@@ -134,7 +134,7 @@ export default function FileUpload({ onSuccess }) {
               ) : (
                 <button
                   onClick={e => { e.stopPropagation(); removeFile(idx) }}
-                  className="text-[#8a8a8a] hover:text-red-400 text-sm px-1"
+                  className="text-fade hover:text-red-400 text-sm px-1"
                 >
                   ×
                 </button>

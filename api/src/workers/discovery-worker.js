@@ -16,12 +16,14 @@ const anthropic = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY })
 // ── Claude prompt ─────────────────────────────────────────────────────────────
 
 function buildPrompt(coverageSummary, vendorCatalog, feedItems) {
-  return `You are the Research360 Discovery Agent for Proof360, a trust intelligence platform for Australian founders and SMEs.
+  return `You are the Research360 Discovery Agent for EthiksLabs — a cross-domain knowledge corpus serving an Australian founder building AI-native trust infrastructure.
 
-Your job is to identify what the corpus is missing that would materially improve vendor recommendations across these gap categories: security, compliance, governance, identity, cloud infrastructure, and operational maturity.
+Your job is to identify what the corpus is missing that would materially improve reasoning quality across these domains: venture capital & fundraising, AI strategy & emerging technology, Australian startup ecosystem, go-to-market & revenue, product & design, trust & governance, competitive intelligence, macro & capital markets, and founder operations.
+
+The power of this corpus is cross-domain synthesis — a response that connects investor psychology with AI trends with Australian market context is more valuable than deep coverage of any single domain. Prioritise sources that create cross-domain connective tissue.
 
 CONFIDENCE DEFINITION:
-confidence = your confidence that ingesting this URL will materially improve Research360 corpus quality for Proof360 vendor recommendations. Score on utility to the corpus, not general importance.
+confidence = your confidence that ingesting this URL will materially improve corpus quality for cross-domain founder reasoning. Score on utility for synthesis, not general importance.
 
 You will receive:
 1. corpus_summary — current corpus coverage (what exists, how fresh, what is thin)

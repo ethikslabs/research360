@@ -32,14 +32,14 @@ export default function ChatInput({ onSubmit, disabled }) {
   }
 
   return (
-    <div className="flex items-end gap-2 p-4 border-t border-[#2e2e2e] bg-[#0f0f0f]">
+    <div className="flex items-end gap-2 p-4" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-deep)' }}>
       <textarea
         ref={ref}
         onKeyDown={onKeyDown}
         disabled={disabled}
         placeholder="Ask Research360…"
         rows={1}
-        className="flex-1 resize-none bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg px-4 py-2.5 text-sm text-[#f0f0f0] placeholder-[#8a8a8a] focus:outline-none focus:border-indigo-500 disabled:opacity-50 transition-colors overflow-hidden"
+        className="flex-1 resize-none bg-surface border border-line rounded-lg px-4 py-2.5 text-sm text-ink placeholder-fade focus:outline-none focus:border-indigo-500 disabled:opacity-50 transition-colors overflow-hidden"
       />
       <button
         onClick={onClickSend}

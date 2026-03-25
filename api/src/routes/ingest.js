@@ -1,4 +1,5 @@
-import { insert } from '../db/queries/documents.js'
+import { createHash } from 'crypto'
+import { insert, findByFileHash } from '../db/queries/documents.js'
 import { upload } from '../services/s3Service.js'
 import { enqueue, EVENTS, buildPayload } from '../queue/events.js'
 
@@ -25,9 +26,20 @@ export default async function ingestRoutes(app) {
     const title = rawTitle || data.filename.replace(/\.[^.]+$/, '')
     const tenantId = fields.tenant_id?.value || 'ethikslabs'
 
-    const doc = await insert({ tenantId, title, sourceType: 'document', fileName: data.filename, fileType: ext })
-
     const fileBuffer = await data.toBuffer()
+    const fileHash = createHash('sha256').update(fileBuffer).digest('hex')
+
+    const existing = await findByFileHash(fileHash, tenantId)
+    if (existing) {
+      return reply.status(409).send({
+        error: 'This file has already been ingested',
+        code: 'DUPLICATE_FILE',
+        document_id: existing.id,
+        existing: { id: existing.id, title: existing.title, status: existing.status, created_at: existing.created_at },
+      })
+    }
+
+    const doc = await insert({ tenantId, title, sourceType: 'document', fileName: data.filename, fileType: ext, fileHash })
     const s3Key = await upload(tenantId, doc.id, 'original', fileBuffer, data.mimetype)
 
     const job = await enqueue(EVENTS.CONTENT_UPLOADED, buildPayload(doc.id, tenantId, EVENTS.CONTENT_UPLOADED))

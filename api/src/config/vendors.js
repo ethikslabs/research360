@@ -1,64 +1,99 @@
-// Proof360 vendor catalog — used by discovery agent for staleness detection.
+// Research360 source catalog — authoritative publishers and research houses.
+// Used by discovery agent for feed polling and staleness detection.
+// "vendor" here means a trusted publishing source, not a software vendor.
 
 export const VENDORS = [
+  // ── Australian ecosystem ──────────────────────────────────────────────────
   {
-    vendor: 'CrowdStrike',
-    tags: ['crowdstrike'],
-    security_page: 'https://www.crowdstrike.com/resources/reports/',
-    gap_categories: ['security', 'identity'],
+    vendor: 'StartupAus',
+    tags: ['startupaus', 'australian startup', 'australia tech'],
+    security_page: 'https://startupaus.org/research/',
+    gap_categories: ['Australian startup ecosystem', 'venture capital & fundraising'],
   },
   {
-    vendor: 'Okta',
-    tags: ['okta'],
-    security_page: 'https://www.okta.com/security/',
-    gap_categories: ['identity'],
+    vendor: 'Blackbird VC',
+    tags: ['blackbird', 'blackbird ventures'],
+    security_page: 'https://blackbird.vc/blog',
+    gap_categories: ['Australian startup ecosystem', 'venture capital & fundraising'],
   },
   {
-    vendor: 'AWS',
-    tags: ['aws', 'amazon'],
-    security_page: 'https://aws.amazon.com/security/',
-    gap_categories: ['cloud infrastructure', 'security'],
+    vendor: 'Cut Through Venture',
+    tags: ['cut through venture', 'australian vc', 'cutthroughventure'],
+    security_page: 'https://www.cutthroughventure.com/reports',
+    gap_categories: ['Australian startup ecosystem', 'venture capital & fundraising'],
+  },
+
+  // ── AI & tech research ────────────────────────────────────────────────────
+  {
+    vendor: 'ARK Invest',
+    tags: ['ark invest', 'ark', 'cathie wood'],
+    security_page: 'https://ark-invest.com/big-ideas/',
+    gap_categories: ['AI strategy & emerging technology', 'macro & capital markets'],
   },
   {
-    vendor: 'Microsoft',
-    tags: ['microsoft', 'azure', 'microsoft365'],
-    security_page: 'https://www.microsoft.com/en-us/trust-center/security',
-    gap_categories: ['cloud infrastructure', 'identity', 'governance'],
+    vendor: 'Gartner',
+    tags: ['gartner', 'magic quadrant', 'hype cycle'],
+    security_page: 'https://www.gartner.com/en/articles/gartner-top-10-strategic-technology-trends',
+    gap_categories: ['AI strategy & emerging technology', 'competitive intelligence'],
   },
   {
-    vendor: 'Google Cloud',
-    tags: ['google', 'gcp', 'google cloud'],
-    security_page: 'https://cloud.google.com/security',
-    gap_categories: ['cloud infrastructure', 'security'],
+    vendor: 'a16z',
+    tags: ['a16z', 'andreessen horowitz', 'andreessen'],
+    security_page: 'https://a16z.com/ai/',
+    gap_categories: ['AI strategy & emerging technology', 'venture capital & fundraising', 'founder operations'],
   },
   {
-    vendor: 'Atlassian',
-    tags: ['atlassian', 'jira', 'confluence'],
-    security_page: 'https://www.atlassian.com/trust',
-    gap_categories: ['governance', 'operational maturity'],
+    vendor: 'Sequoia Capital',
+    tags: ['sequoia', 'sequoia capital'],
+    security_page: 'https://www.sequoiacap.com/article/',
+    gap_categories: ['venture capital & fundraising', 'founder operations', 'macro & capital markets'],
+  },
+
+  // ── Founder & GTM ─────────────────────────────────────────────────────────
+  {
+    vendor: 'Y Combinator',
+    tags: ['ycombinator', 'yc', 'y combinator'],
+    security_page: 'https://www.ycombinator.com/library',
+    gap_categories: ['founder operations', 'go-to-market & revenue'],
   },
   {
-    vendor: 'Palo Alto Networks',
-    tags: ['palo alto', 'paloalto'],
-    security_page: 'https://www.paloaltonetworks.com/security',
-    gap_categories: ['security'],
+    vendor: 'First Round Capital',
+    tags: ['first round', 'firstround'],
+    security_page: 'https://review.firstround.com/',
+    gap_categories: ['founder operations', 'go-to-market & revenue', 'product & design'],
   },
   {
-    vendor: 'Qualys',
-    tags: ['qualys'],
-    security_page: 'https://www.qualys.com/security/',
-    gap_categories: ['security', 'compliance'],
+    vendor: 'OpenView Partners',
+    tags: ['openview', 'plg', 'product led growth'],
+    security_page: 'https://openviewpartners.com/blog/',
+    gap_categories: ['go-to-market & revenue'],
+  },
+
+  // ── Market intelligence ───────────────────────────────────────────────────
+  {
+    vendor: 'CB Insights',
+    tags: ['cb insights', 'cbinsights'],
+    security_page: 'https://www.cbinsights.com/research/',
+    gap_categories: ['venture capital & fundraising', 'competitive intelligence', 'AI strategy & emerging technology'],
   },
   {
-    vendor: 'Vanta',
-    tags: ['vanta'],
-    security_page: 'https://www.vanta.com/resources',
-    gap_categories: ['compliance', 'governance'],
+    vendor: 'McKinsey',
+    tags: ['mckinsey', 'mckinsey global institute'],
+    security_page: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai',
+    gap_categories: ['AI strategy & emerging technology', 'macro & capital markets'],
+  },
+
+  // ── Trust & governance ────────────────────────────────────────────────────
+  {
+    vendor: 'OECD AI Policy',
+    tags: ['oecd', 'oecd ai'],
+    security_page: 'https://oecd.ai/en/dashboards',
+    gap_categories: ['trust, governance & AI ethics'],
   },
   {
-    vendor: 'Drata',
-    tags: ['drata'],
-    security_page: 'https://drata.com/resources',
-    gap_categories: ['compliance', 'governance'],
+    vendor: 'NIST AI',
+    tags: ['nist ai', 'ai rmf'],
+    security_page: 'https://www.nist.gov/artificial-intelligence',
+    gap_categories: ['trust, governance & AI ethics'],
   },
 ]

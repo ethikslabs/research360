@@ -3,4 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/research360': 'http://localhost:3001',
+      '/api': 'http://localhost:3001',
+    },
+  },
 })

@@ -16,12 +16,12 @@ export default function LibraryView() {
   const { documents, total, loading, error, remove } = useDocuments(filter)
 
   return (
-    <div className="flex-1 flex flex-col p-8 max-w-4xl w-full overflow-y-auto">
+    <div className="flex-1 flex flex-col p-8 max-w-4xl w-full overflow-y-auto mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-semibold text-[#f0f0f0]">
+        <h1 className="text-lg font-semibold text-ink">
           Library
           {!loading && (
-            <span className="ml-2 text-sm font-normal text-[#8a8a8a]">{total}</span>
+            <span className="ml-2 text-sm font-normal text-fade">{total}</span>
           )}
         </h1>
         <button
@@ -32,7 +32,7 @@ export default function LibraryView() {
         </button>
       </div>
 
-      <div className="flex gap-1 mb-4 bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-4 bg-surface border border-line rounded-lg p-1 w-fit">
         {FILTERS.map(f => (
           <button
             key={f.value}
@@ -40,8 +40,8 @@ export default function LibraryView() {
             className={[
               'px-3 py-1 rounded text-sm transition-colors',
               filter === f.value
-                ? 'bg-[#242424] text-[#f0f0f0]'
-                : 'text-[#8a8a8a] hover:text-[#f0f0f0]',
+                ? 'bg-elevated text-ink'
+                : 'text-fade hover:text-ink',
             ].join(' ')}
           >
             {f.label}
@@ -49,14 +49,14 @@ export default function LibraryView() {
         ))}
       </div>
 
-      <div className="bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg overflow-hidden">
+      <div className="bg-surface border border-line rounded-lg overflow-hidden">
         {loading ? (
-          <div className="px-5 py-8 text-center text-sm text-[#8a8a8a]">Loading…</div>
+          <div className="px-5 py-8 text-center text-sm text-fade">Loading…</div>
         ) : error ? (
           <div className="px-5 py-8 text-center text-sm text-red-400">{error}</div>
         ) : documents.length === 0 ? (
           <div className="px-5 py-12 text-center">
-            <div className="text-[#8a8a8a] text-sm">No documents yet</div>
+            <div className="text-fade text-sm">No documents yet</div>
             <button
               onClick={() => navigate('/ingest')}
               className="mt-3 text-indigo-400 hover:text-indigo-300 text-sm"

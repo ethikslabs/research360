@@ -4,12 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: '#1a1a1a',
-        elevated: '#242424',
-        border: '#2e2e2e',
+        canvas:   'var(--bg)',
+        deep:     'var(--bg-deep)',
+        surface:  'var(--surface)',
+        elevated: 'var(--elevated)',
+        line:     'var(--border)',
+        ink:      'var(--text)',
+        fade:     'var(--muted)',
+        // Override indigo → sage green throughout without touching component files
+        indigo: {
+          300: '#a3c4b0',
+          400: '#7faa94',
+          500: '#5c8a72',
+          600: '#4a7560',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['JetBrains Mono', 'monospace'],
+        display: ['Syne', 'sans-serif'],
+        serif: ['Lora', 'Georgia', 'serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
     },
   },

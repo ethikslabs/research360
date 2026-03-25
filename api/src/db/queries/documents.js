@@ -1,13 +1,21 @@
 import { pool } from '../client.js'
 
-export async function insert({ tenantId, title, sourceType, sourceUrl, fileName, fileType, s3Key }) {
+export async function insert({ tenantId, title, sourceType, sourceUrl, fileName, fileType, s3Key, fileHash }) {
   const res = await pool.query(
-    `INSERT INTO documents (tenant_id, title, source_type, source_url, file_name, file_type, s3_key, status)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, 'PENDING')
+    `INSERT INTO documents (tenant_id, title, source_type, source_url, file_name, file_type, s3_key, file_hash, status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'PENDING')
      RETURNING id, status, source_type, created_at`,
-    [tenantId, title || null, sourceType, sourceUrl || null, fileName || null, fileType || null, s3Key || null]
+    [tenantId, title || null, sourceType, sourceUrl || null, fileName || null, fileType || null, s3Key || null, fileHash || null]
   )
   return res.rows[0]
+}
+
+export async function findByFileHash(fileHash, tenantId) {
+  const res = await pool.query(
+    `SELECT id, title, status, created_at FROM documents WHERE file_hash = $1 AND tenant_id = $2 LIMIT 1`,
+    [fileHash, tenantId]
+  )
+  return res.rows[0] || null
 }
 
 export async function findById(id, tenantId) {

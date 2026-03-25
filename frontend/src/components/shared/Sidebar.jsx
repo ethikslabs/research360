@@ -1,39 +1,69 @@
 import { NavLink } from 'react-router-dom'
 
 const nav = [
-  { to: '/chat', label: 'Chat' },
-  { to: '/library', label: 'Library' },
-  { to: '/ingest', label: 'Ingest' },
+  { to: '/chat',    label: 'Chat',    glyph: '◈' },
+  { to: '/library', label: 'Library', glyph: '◫' },
+  { to: '/ingest',  label: 'Ingest',  glyph: '◎' },
 ]
 
 export default function Sidebar() {
   return (
-    <aside className="w-[120px] min-h-screen flex flex-col border-r border-[#2e2e2e] bg-[#0f0f0f]">
-      <div className="px-4 py-5">
-        <span className="text-base font-semibold text-[#f0f0f0] tracking-tight">R360</span>
+    <aside className="w-[108px] min-h-screen flex flex-col bg-deep" style={{ borderRight: '1px solid var(--elevated)' }}>
+
+      {/* Logotype */}
+      <div className="px-5 pt-6 pb-5">
+        <div className="font-display leading-none" style={{ letterSpacing: '-0.02em' }}>
+          <span className="text-[20px] font-bold text-ink">R</span>
+          <span className="text-[20px] font-bold" style={{ color: '#5c8a72' }}>360</span>
+        </div>
+        <div className="mt-1.5 text-[8px] uppercase tracking-[0.22em] text-fade">
+          research
+        </div>
       </div>
 
-      <nav className="flex-1 flex flex-col gap-1 px-2 mt-2">
-        {nav.map(({ to, label }) => (
+      {/* Hairline divider */}
+      <div className="mx-5 mb-3" style={{ height: '1px', background: 'var(--elevated)' }} />
+
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col gap-px px-3">
+        {nav.map(({ to, label, glyph }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
               [
-                'flex items-center px-3 py-2 rounded text-sm transition-colors',
+                'flex items-center gap-2.5 px-2.5 py-2 rounded transition-colors duration-150',
                 isActive
-                  ? 'border-l-2 border-indigo-500 bg-white/5 text-[#f0f0f0] pl-[10px]'
-                  : 'text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-white/5',
+                  ? 'bg-surface text-ink'
+                  : 'text-fade hover:text-ink hover:bg-surface/50',
               ].join(' ')
             }
           >
-            {label}
+            {({ isActive }) => (
+              <>
+                <span
+                  className="text-[11px] shrink-0 transition-colors"
+                  style={{ color: isActive ? '#5c8a72' : undefined }}
+                >
+                  {glyph}
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.1em]">
+                  {label}
+                </span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      <div className="px-4 py-4">
-        <span className="text-[11px] text-[#8a8a8a]">ethikslabs</span>
+      {/* Footer mark */}
+      <div className="px-5 py-5">
+        <div
+          className="text-[8px] uppercase tracking-[0.2em] text-fade opacity-50"
+          style={{ letterSpacing: '0.18em' }}
+        >
+          ethikslabs
+        </div>
       </div>
     </aside>
   )

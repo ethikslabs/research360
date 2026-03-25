@@ -41,17 +41,17 @@ export default function DocumentRow({ doc, onDelete }) {
   return (
     <div
       className={[
-        'group flex items-center gap-4 px-5 py-4 border-b border-[#2e2e2e] last:border-b-0 transition-colors hover:bg-white/[0.02]',
+        'group flex items-center gap-4 px-5 py-4 border-b border-line last:border-b-0 transition-colors hover:bg-white/[0.02]',
         processing ? 'border-l-2 border-l-indigo-500/60' : '',
       ].join(' ')}
     >
       <span className="text-base w-5 text-center shrink-0">{sourceIcon(doc.source_type)}</span>
 
       <div className="flex-1 min-w-0">
-        <div className="text-sm text-[#f0f0f0] truncate font-medium">
+        <div className="text-sm text-ink truncate font-medium">
           {displayName}
         </div>
-        <div className="flex items-center gap-2 mt-0.5 text-xs text-[#8a8a8a]">
+        <div className="flex items-center gap-2 mt-0.5 text-xs text-fade">
           <span className="capitalize">{doc.source_type}</span>
           {doc.chunk_count != null && (
             <>
@@ -69,7 +69,7 @@ export default function DocumentRow({ doc, onDelete }) {
       <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
         {confirming ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#8a8a8a]">Delete?</span>
+            <span className="text-xs text-fade">Delete?</span>
             <button
               onClick={handleDelete}
               disabled={deleting}
@@ -79,7 +79,7 @@ export default function DocumentRow({ doc, onDelete }) {
             </button>
             <button
               onClick={() => setConfirming(false)}
-              className="text-xs text-[#8a8a8a] hover:text-[#f0f0f0]"
+              className="text-xs text-fade hover:text-ink"
             >
               No
             </button>
@@ -87,7 +87,7 @@ export default function DocumentRow({ doc, onDelete }) {
         ) : (
           <button
             onClick={handleDelete}
-            className="text-xs text-[#8a8a8a] hover:text-red-400 transition-colors px-2 py-1"
+            className="text-xs text-fade hover:text-red-400 transition-colors px-2 py-1"
           >
             Delete
           </button>

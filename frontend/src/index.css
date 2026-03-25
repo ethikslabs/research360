@@ -2,8 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme tokens ────────────────────────────────────────────────────────── */
+
+:root {
+  /* Light theme */
+  --bg:       #f2ede4;
+  --bg-deep:  #ebe5db;
+  --surface:  #e4ddd1;
+  --elevated: #d9d1c4;
+  --border:   #c2b9a8;
+  --text:     #1a1714;
+  --muted:    #7a7068;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #0c0b09;
+    --bg-deep:  #0a0908;
+    --surface:  #161411;
+    --elevated: #1e1c19;
+    --border:   #2a2724;
+    --text:     #ede8df;
+    --muted:    #6b6560;
+  }
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -12,41 +40,78 @@
   to   { opacity: 1; }
 }
 
-.animate-fade-up {
-  animation: fadeUp 0.18s ease-out forwards;
+.animate-fade-up  { animation: fadeUp  0.2s  ease-out forwards; }
+.animate-fade-in  { animation: fadeIn  0.15s ease-out forwards; }
+
+/* ─── Grain overlay ───────────────────────────────────────────────────────── */
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9999;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.15s ease-out forwards;
-}
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 
 @layer base {
   body {
-    background-color: #0f0f0f;
-    color: #f0f0f0;
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #0f0f0f;
-  }
-
+  ::-webkit-scrollbar       { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: #2e2e2e;
-    border-radius: 3px;
+    background: var(--border);
+    border-radius: 2px;
   }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3e3e3e;
+/* ─── Prose: assistant messages use Lora serif ────────────────────────────── */
+
+.prose,
+.prose p,
+.prose li,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose blockquote {
+  font-family: 'Lora', Georgia, serif !important;
+  line-height: 1.78;
+}
+
+.prose code,
+.prose pre {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Override prose-invert variables in light mode so text stays readable */
+@media (prefers-color-scheme: light) {
+  .prose-invert {
+    --tw-prose-body:         #1a1714;
+    --tw-prose-headings:     #0d0c0b;
+    --tw-prose-bold:         #0d0c0b;
+    --tw-prose-links:        #4a7560;
+    --tw-prose-code:         #1a1714;
+    --tw-prose-pre-bg:       #d9d1c4;
+    --tw-prose-quotes:       #1a1714;
+    --tw-prose-quote-borders:#c2b9a8;
+    --tw-prose-counters:     #7a7068;
+    --tw-prose-bullets:      #7a7068;
+    --tw-prose-hr:           #c2b9a8;
+    --tw-prose-th-borders:   #c2b9a8;
+    --tw-prose-td-borders:   #c2b9a8;
   }
 }
