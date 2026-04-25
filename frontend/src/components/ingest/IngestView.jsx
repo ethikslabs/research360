@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FileUpload from './FileUpload.jsx'
 import UrlIngest from './UrlIngest.jsx'
+import YouTubeIngest from './YouTubeIngest.jsx'
 
-const TABS = ['File', 'URL']
+const TABS = ['File', 'URL', 'YouTube']
 
 export default function IngestView() {
   const [tab, setTab] = useState('File')
@@ -34,11 +35,9 @@ export default function IngestView() {
         ))}
       </div>
 
-      {tab === 'File' ? (
-        <FileUpload onSuccess={onSuccess} />
-      ) : (
-        <UrlIngest onSuccess={onSuccess} />
-      )}
+      {tab === 'File' && <FileUpload onSuccess={onSuccess} />}
+      {tab === 'URL' && <UrlIngest onSuccess={onSuccess} />}
+      {tab === 'YouTube' && <YouTubeIngest onSuccess={onSuccess} />}
     </div>
   )
 }
