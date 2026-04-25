@@ -23,6 +23,7 @@ aws s3 sync s3://ethikslabs-core/deploy/research360/ $APP_DIR/ \
   --exclude "frontend/node_modules/*" \
   --region $REGION
 
+cd $APP_DIR
 echo "==> Building and starting containers..."
 docker compose -f docker-compose.prod.yml up -d --build
 
