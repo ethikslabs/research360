@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { createConnection } from 'node:net'
 import Fastify from 'fastify'
 import multipart from '@fastify/multipart'
 import cors from '@fastify/cors'
@@ -59,6 +60,21 @@ app.register(trustRoutes)
 
 async function start() {
   await initialize()
+
+  // Port guard
+  await new Promise((resolve) => {
+    const probe = createConnection({ port: config.PORT, host: 'localhost' })
+    probe.once('connect', () => {
+      probe.destroy()
+      process.stderr.write(`[research360] Port ${config.PORT} already in use — kill it with: kill $(lsof -ti:${config.PORT})\n`)
+      process.exit(1)
+    })
+    probe.once('error', () => {
+      probe.destroy()
+      resolve()
+    })
+  })
+
   await app.listen({ port: config.PORT, host: '0.0.0.0' })
 
   startExtractionWorker()

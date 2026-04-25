@@ -4,6 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## AWS / EC2 — HARD RULES
+
+- **Never run any command on any EC2 instance unless John has explicitly named it in the current conversation.**
+- **Only touch instances tagged `Owner: ethikslabs`. If the instance does not have this tag, do not touch it under any circumstances.**
+- If an SSM action is denied, STOP. Do not look for another instance. Ask John.
+- Finding project files on an instance does not mean you have permission to deploy to it.
+- If uncertain, ask. Never assume.
+
+---
+
 ## Commands
 
 ### Infrastructure
@@ -27,8 +37,14 @@ npx vitest run tests/unit/canonicalize.test.js   # single test file
 
 ### Frontend (`frontend/`)
 ```bash
-npm run dev     # Vite dev server
+npm run dev     # Vite dev server (default port 5173)
 npm run build
+```
+
+### Environment (`frontend/.env`)
+```
+VITE_API_URL=http://localhost:3001   # omit in prod (uses relative URLs via nginx proxy)
+VITE_GOOGLE_CLIENT_ID=               # required for YouTube ingest tab (Google OAuth 2.0)
 ```
 
 ### Migrations
@@ -37,7 +53,8 @@ Migrations are plain SQL files — run them manually in order:
 psql $DATABASE_URL -f api/src/db/migrations/001_initial.sql
 psql $DATABASE_URL -f api/src/db/migrations/004_discovery_agent.sql
 psql $DATABASE_URL -f api/src/db/migrations/005_provenance_engine.sql
-# New files: next sequential number, e.g. 006_*.sql
+psql $DATABASE_URL -f api/src/db/migrations/006_file_hash.sql
+# New files: next sequential number, e.g. 007_*.sql
 ```
 
 ### Environment (`api/.env`)
@@ -64,10 +81,11 @@ UNSTRUCTURED_API_KEY=...
 
 ### Pipeline
 
-Documents and URLs enter via the ingest route, are uploaded to S3, then processed through four sequential BullMQ workers:
+Documents and URLs enter via the ingest routes, are uploaded to S3, then processed through four sequential BullMQ workers:
 
 ```
-POST /api/ingest
+POST /research360/ingest/file   (PDF, DOCX, PPTX — 50MB limit; SHA-256 dedup rejects duplicates with 409)
+POST /research360/ingest/url    (any URL; youtube.com/youtu.be URLs auto-tagged source_type=youtube)
   → s3Service.upload()
   → enqueue(CONTENT_UPLOADED)
     → extractionWorker  (text → { text, extraction_confidence, extraction_method }; computes provenance_meta; snapshots to S3)
@@ -111,30 +129,55 @@ A separate `discovery-worker.js` runs a nightly cron (`0 2 * * *`). It scores ca
 
 ### Query / RAG
 
-`POST /api/query` → `retrievalService.js` → pgvector cosine similarity search → `reasoningService.js` → Claude Sonnet streaming response. The query route accepts `provenance_depth` (`summary` | `internal` | `full_internal`), `layers`, and `run_id`. Sources are shaped via `shapeByDepth()` before returning — `summary` depth strips `layer`, `chunk_id`, `ingested_by`, `raw_snapshot_uri`, and `reasoning`.
+`POST /research360/query` → `retrievalService.js` → pgvector cosine similarity search → `reasoningService.js` → Claude Sonnet streaming response. The query route accepts `provenance_depth` (`summary` | `internal` | `full_internal`), `layers`, and `run_id`. Sources are shaped via `shapeByDepth()` before returning — `summary` depth strips `layer`, `chunk_id`, `ingested_by`, `raw_snapshot_uri`, and `reasoning`.
 
 ### API routes
 
+Route prefix is mixed — `/research360/` for ingest/documents/query; `/api/` for discovery/research/trust.
+
 ```
-GET  /api/health
+GET  /health
 
-POST /api/ingest
-GET  /api/documents
-GET  /api/documents/:id
+POST /research360/ingest/file
+POST /research360/ingest/url
+GET  /research360/documents
+GET  /research360/documents/:id
+GET  /research360/documents/:id/download
+DELETE /research360/documents/:id
+GET  /research360/sessions/:id
 
-POST /api/query
+POST /research360/query
 
 GET  /api/discovery/pending
+GET  /api/discovery/runs
 POST /api/discovery/:id/approve
 POST /api/discovery/:id/reject
-POST /api/discovery/trigger
+POST /api/discovery/run
 
 POST /api/research/refresh
 GET  /api/research/provenance/:chunk_id
 
 GET  /api/trust/runs/:run_id/provenance
 GET  /api/trust/runs/:run_id/events
+PUT/PATCH/DELETE /api/trust/runs/:run_id  → 405 (append-only)
 ```
+
+### Frontend structure
+
+```
+frontend/src/
+  App.jsx                        — root, screen routing
+  config/index.js                — API_URL + DEFAULTS (persona, complexity, pollInterval)
+  api/                           — thin fetch wrappers keyed by domain
+  hooks/useChat.js               — streaming query state
+  hooks/useDocuments.js          — document list polling
+  components/chat/               — chat UI
+  components/ingest/             — IngestView + tab components (File, URL, YouTube*)
+  components/library/            — document library
+  components/shared/             — reusable primitives
+```
+
+\* YouTube ingest tab: design approved (`docs/superpowers/specs/2026-04-04-youtube-ingest-design.md`), implementation plan not yet written. Frontend-only — Google OAuth 2.0 PKCE, `useYouTubeAuth.js` hook, calls existing `POST /research360/ingest/url`. Requires `VITE_GOOGLE_CLIENT_ID` and a Google Cloud OAuth 2.0 Web client configured with `http://localhost:5173` as origin and redirect URI.
 
 ### Key design rules
 - Business logic lives in `services/` — routes are thin HTTP handlers only.

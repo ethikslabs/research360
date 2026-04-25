@@ -68,6 +68,7 @@ export function startExtractionWorker() {
     console.log(JSON.stringify({ stage: 'extraction_complete', document_id, timestamp: new Date().toISOString() }))
   }, {
     connection: redis,
+    concurrency: 5,
     ...RETRY_CONFIG,
   })
 

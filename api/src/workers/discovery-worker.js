@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { Worker } from 'bullmq'
 import { randomUUID } from 'crypto'
 import { redis } from '../queue/client.js'
@@ -11,7 +11,7 @@ import { pollFeeds } from '../services/feed-poller.js'
 import { validateManifest } from '../services/manifest-validator.js'
 import { canonicalizeUrl, sourceDomain, isDuplicate } from '../services/canonicalize.js'
 
-const anthropic = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY })
+const gateway = new OpenAI({ baseURL: process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1', apiKey: 'gateway' })
 
 // ── Claude prompt ─────────────────────────────────────────────────────────────
 
@@ -206,18 +206,18 @@ async function runDiscovery() {
     metrics.feed_sources_polled = polled
     metrics.feed_source_failures = failures
 
-    // 2. Call Claude
+    // 2. Call gateway (claude-* routes to Anthropic automatically)
     const prompt = buildPrompt(coverageSummary, GAP_CATEGORIES, feedItems)
     const claudeStart = Date.now()
 
-    const message = await anthropic.messages.create({
+    const message = await gateway.chat.completions.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 4096,
       messages: [{ role: 'user', content: prompt }],
     })
 
     metrics.claude_latency_ms = Date.now() - claudeStart
-    const rawJson = message.content[0]?.text || '[]'
+    const rawJson = message.choices[0]?.message?.content || '[]'
 
     // 3. Validate manifest
     const { ok, candidates, rejected, error: parseError } = validateManifest(rawJson)

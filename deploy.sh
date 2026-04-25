@@ -11,13 +11,17 @@ get_param() {
 
 export POSTGRES_PASSWORD=$(get_param "/research360/POSTGRES_PASSWORD")
 export S3_BUCKET=$(get_param "/research360/S3_BUCKET")
-export OPENAI_API_KEY=$(get_param "/research360/OPENAI_API_KEY")
-export ANTHROPIC_API_KEY=$(get_param "/research360/ANTHROPIC_API_KEY")
+export OPENAI_API_KEY=$(get_param "/ethikslabs/openai/api-key")
+export ANTHROPIC_API_KEY=$(get_param "/ethikslabs/anthropic/api-key")
 export UNSTRUCTURED_API_KEY=$(get_param "/research360/UNSTRUCTURED_API_KEY" 2>/dev/null || echo "not-set")
 
-echo "==> Pulling latest code..."
-cd $APP_DIR
-git pull origin main
+echo "==> Syncing from S3..."
+aws s3 sync s3://ethikslabs-core/deploy/research360/ $APP_DIR/ \
+  --exclude ".git/*" \
+  --exclude "node_modules/*" \
+  --exclude "api/node_modules/*" \
+  --exclude "frontend/node_modules/*" \
+  --region $REGION
 
 echo "==> Building and starting containers..."
 docker compose -f docker-compose.prod.yml up -d --build

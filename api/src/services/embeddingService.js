@@ -1,8 +1,8 @@
 import OpenAI from 'openai'
-import { config } from '../config/env.js'
 
-const openai = new OpenAI({ apiKey: config.OPENAI_API_KEY })
-const MODEL = 'text-embedding-3-large'
+const GATEWAY_URL = process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1'
+const openai = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway' })
+const MODEL = process.env.EMBEDDING_MODEL || 'text-embedding-3-large'
 const BATCH_SIZE = 100
 
 export async function embedTexts(texts) {

@@ -1,8 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { config } from '../config/env.js'
 import { PERSONAS } from '../config/personas.js'
 
-const client = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY })
+const GATEWAY_URL = process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1'
+const client = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway' })
 
 const COMPLEXITY_CONFIG = {
   simple:   { style: 'Brief, direct answer. 2-3 sentences maximum.' },
@@ -34,9 +35,9 @@ Format your full response as JSON:
   "suggestions": ["question 1", "question 2", "question 3"]
 }`
 
-  // Last 6 turns of history
   const recentHistory = history.slice(-6)
   const messages = [
+    { role: 'system', content: systemPrompt },
     ...recentHistory.map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.content })),
     {
       role: 'user',
@@ -44,18 +45,17 @@ Format your full response as JSON:
     },
   ]
 
-  const res = await client.messages.create({
+  const res = await client.chat.completions.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4096,
-    system: systemPrompt,
     messages,
   })
 
-  const raw = res.content[0].text.trim()
+  const raw = res.choices[0].message.content.trim()
 
   let parsed
   try {
-    const jsonMatch = raw.match(/\{[\s\S]*\}/)
+    const jsonMatch = raw.replace(/<think>[\s\S]*?<\/think>/g, '').trim().match(/\{[\s\S]*\}/)
     parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw)
   } catch {
     parsed = { answer: raw, suggestions: [] }

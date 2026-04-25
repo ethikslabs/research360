@@ -9,6 +9,7 @@
     "dev": "node --watch src/app.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:log": "node scripts/test-log.js",
     "test:unit": "vitest run tests/unit",
     "test:property": "vitest run tests/property"
   },
