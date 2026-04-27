@@ -11,7 +11,7 @@ import { pollFeeds } from '../services/feed-poller.js'
 import { validateManifest } from '../services/manifest-validator.js'
 import { canonicalizeUrl, sourceDomain, isDuplicate } from '../services/canonicalize.js'
 
-const gateway = new OpenAI({ baseURL: process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1', apiKey: 'gateway' })
+const gateway = new OpenAI({ baseURL: process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1', apiKey: 'gateway', defaultHeaders: { 'X-Tenant-ID': 'research360' } })
 
 // ── Claude prompt ─────────────────────────────────────────────────────────────
 

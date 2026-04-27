@@ -1,7 +1,7 @@
 import OpenAI from 'openai'
 
 const GATEWAY_URL = process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1'
-const openai = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway' })
+const openai = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway', defaultHeaders: { 'X-Tenant-ID': 'research360' } })
 const MODEL = process.env.EMBEDDING_MODEL || 'text-embedding-3-large'
 const BATCH_SIZE = 100
 

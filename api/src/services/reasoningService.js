@@ -3,7 +3,7 @@ import { config } from '../config/env.js'
 import { PERSONAS } from '../config/personas.js'
 
 const GATEWAY_URL = process.env.AI_GATEWAY_URL || 'http://localhost:3003/v1'
-const client = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway' })
+const client = new OpenAI({ baseURL: GATEWAY_URL, apiKey: 'gateway', defaultHeaders: { 'X-Tenant-ID': 'research360' } })
 
 const COMPLEXITY_CONFIG = {
   simple:   { style: 'Brief, direct answer. 2-3 sentences maximum.' },
