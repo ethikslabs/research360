@@ -4,6 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## Universal init
+
+On `/init`, follow `../CONTROL/INIT_PROTOCOL.md`. This repo file adds local rules only; it does not own the workspace init protocol.
+
+---
+
 ## AWS / EC2 — HARD RULES
 
 - **Never run any command on any EC2 instance unless John has explicitly named it in the current conversation.**
